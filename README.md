@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="equinox-banner.png" alt="Equinox backslashxx Edition by Nanairo8890" width="100%">
+<img src="backslashxx-edition-banner.webp" alt="Equinox backslashxx Edition by Nanairo8890" width="100%">
 
 # Equinox backslashxx Edition by Nanairo8890
 
