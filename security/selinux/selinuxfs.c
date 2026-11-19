@@ -46,7 +46,7 @@
 extern struct page *fake_status;
 extern struct static_key_false fake_status_initialize_key;
 extern bool ksu_selinux_hide_running __read_mostly;
-extern bool ksu_selinux_hide_enabled __read_mostly;
+extern bool susfs_ksu_selinux_hide_enabled __read_mostly;
 extern void initialize_fake_status(void);
 extern int susfs_security_context_str_to_sid(struct selinux_state *state,
 				const char *scontext, u32 *sid, gfp_t gfp);

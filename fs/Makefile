@@ -140,3 +140,6 @@ obj-$(CONFIG_EROFS_FS)		+= erofs/
 obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
 obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
 obj-$(CONFIG_NOMOUNT)		+= nomount/
+
+# backslashxx edition: preinit is handled by its own hooks, not the inline exec.c call sites
+CFLAGS_exec.o += -DKSU_NO_PREINIT

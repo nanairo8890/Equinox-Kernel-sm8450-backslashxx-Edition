@@ -30,9 +30,9 @@
 #ifdef CONFIG_KSU_SUSFS
 extern struct static_key_false ksu_is_init_rc_hook_enabled;
 extern void ksu_handle_vfs_fstat(int fd, loff_t *kstat_size_ptr);
-extern struct static_key_true ksu_su_compat_enabled;
+extern struct static_key_true susfs_su_compat_enabled_key; // backslashxx edition: see KernelSU/kernel/extension/susfs.c
 extern bool __ksu_is_allow_uid_for_current(uid_t uid);
-extern int ksu_handle_stat(int *dfd, struct filename **filename, int *flags);
+extern int susfs_inl_stat(int *dfd, struct filename **filename, int *flags);
 #endif // #ifdef CONFIG_KSU_SUSFS
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 extern bool susfs_is_inode_sus_kstat(struct inode *inode, bool *out_is_fuse);
@@ -260,9 +260,9 @@ retry:
 	if (likely(susfs_is_current_proc_no_su()))
 		goto orig_flow;
 
-	if (static_branch_likely(&ksu_su_compat_enabled)) {
+	if (static_branch_likely(&susfs_su_compat_enabled_key)) {
 		if (unlikely(__ksu_is_allow_uid_for_current(current_uid().val)))
-			ksu_handle_stat(&dfd, &fname, &flags);
+			susfs_inl_stat(&dfd, &fname, &flags);
 	}
 
 orig_flow:

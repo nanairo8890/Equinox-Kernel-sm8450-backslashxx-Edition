@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="finasu-edition-banner.webp" alt="Equinox FinaSU Edition by Nanairo8890" width="100%">
+<img src="equinox-banner.png" alt="Equinox backslashxx Edition by Nanairo8890" width="100%">
 
-# Equinox FinaSU Edition by Nanairo8890
+# Equinox backslashxx Edition by Nanairo8890
 
 **POCO F5 Pro / Redmi K60** · `mondrian` · Snapdragon 8+ Gen 1 · **MistOS 5.1 Beta**
 
@@ -13,20 +13,20 @@
 ---
 
 > [!NOTE]
-> **This repository is the FinaSU edition of Equinox**, made by **Nanairo** with
+> **This repository is the backslashxx edition of Equinox**, made by **Nanairo** with
 > LF52406's permission. It is Equinox 5.10.269 as released, with these changes:
 >
-> - **[FinaSU](https://github.com/LyraVoid/FinaSU)** by LyraVoid (a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of KernelSU-Next, as the `KernelSU/` submodule at `ff0e34f1` (`v1.6.4`, version 33211), built into the kernel with FinaSU's default Tracepoint hook backend. Use the **official FinaSU manager** (`FinaSU_v1.6.4_33211-release.apk`, package `me.yuki.fina`): the kernel trusts that manager's signing certificate in FinaSU's release trust slot, and other KernelSU-family managers are recognized but never granted. FinaSU uses UAPI 6.
-> - **SUSFS v2.4.0** from [simonpunk's](https://gitlab.com/simonpunk/susfs4ksu) `gki-android12-5.10` branch, through FinaSU's SUSFS support. FinaSU v1.6.0 and later register the SELinux types and rules KernelSU injects as SUSFS hidden entries themselves, so SELinux queries from apps do not see them.
+> - **[backslashxx/KernelSU](https://github.com/backslashxx/KernelSU)** v3.3.1+52 (UAPI 6, a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of FinaSU, as the `KernelSU/` submodule, built into the kernel with backslashxx's own hook backend (ARM64 syscall-table / branch-link patching, not an inline fs/exec.c hook). Use **backslashxx's official manager** (package `me.weishu.kernelsu`).
+> - **SUSFS v2.4.0** from [simonpunk's](https://gitlab.com/simonpunk/susfs4ksu) `gki-android12-5.10` branch. backslashxx ships no SUSFS support of its own, so this edition adds a dedicated interface (`KernelSU/kernel/extension/susfs.c`) wiring SUSFS's SID lookups, zygote/zygote_next umount handling and SELinux rule registration onto backslashxx's own code.
 > - **BBR** as the default TCP congestion control.
-> - **[NoMount](https://github.com/maxsteeel/nomount) v2.3.0** by maxsteeel built in (`fs/nomount`), which includes deref3046's fix. FinaSU detects the built-in driver and uses it as the **NoMount** mount backend, so **no metamodule is needed** (choose NoMount in the manager; remove the NoMount metamodule if installed). Processes that FinaSU/SUSFS umount modules for see the stock filesystem, and NoMount is hidden from `/sys/module` and `/proc/kallsyms`.
-> - **Extra `/proc/kallsyms` hiding** (r2, extended in 1.8): FinaSU exports many driver symbols whose names do not start with the usual KernelSU/SUSFS prefixes, so SUSFS's filter left them visible. The filter now also hides those, each one checked against a clean Equinox build; the prefixes added in 1.8 were also checked against the vendor modules of MistOS 20261025 and Infinity-X 4.1, so only FinaSU's own symbols are hidden.
+> - **[NoMount](https://github.com/maxsteeel/nomount) v2.3.0** by maxsteeel built in (`fs/nomount`), which includes deref3046's fix. Processes whose modules are umounted see the stock filesystem, and NoMount is hidden from `/sys/module` and `/proc/kallsyms`. SUSFS and NoMount are each controlled from their own root module (`ksu_module_susfs`, the NoMount metamodule), installable from backslashxx's manager like any KernelSU module — no special manager is needed.
+> - **Extra `/proc/kallsyms` hiding**: backslashxx exports many driver symbols whose names do not start with the usual KernelSU/SUSFS prefixes, so SUSFS's filter left them visible. The filter now also hides those, each one checked against a clean Equinox build.
 >
 > Everything else, DroidSpaces included, is LF52406's work, described below. The official Equinox
 > builds are at [LF52406/Equinox-Kernel-sm8450](https://github.com/LF52406/Equinox-Kernel-sm8450).
-> Report problems with this edition to Nanairo8890, not to LF52406 or LyraVoid.
+> Report problems with this edition to Nanairo8890, not to LF52406 or backslashxx.
 >
-> Build: `CLANG_DIR=/path/to/clang/bin scripts/equinox/build-finasu.sh`, then `scripts/equinox/package-finasu.sh` · Changes: [release notes](scripts/equinox/release-notes/5.10.269-finasu-2.5.5.md) · Changelog: [English](CHANGELOG.en.txt) · [Español](CHANGELOG.es.txt) · [Português (Brasil)](CHANGELOG.pt-BR.txt) · [Русский](CHANGELOG.ru.txt)
+> Build: `CLANG_DIR=/path/to/clang/bin scripts/equinox/build-bsxx.sh`, then `scripts/equinox/package-bsxx.sh` · Changes: [release notes](scripts/equinox/release-notes/5.10.269-bsxx-1.0.md) · Changelog: [English](CHANGELOG.en.txt) · [Español](CHANGELOG.es.txt) · [Português (Brasil)](CHANGELOG.pt-BR.txt) · [Русский](CHANGELOG.ru.txt)
 
 ---
 
@@ -34,10 +34,10 @@
 
 | Component | Current |
 |:--|:--|
-| **Version** | `2.5.5` |
-| **Linux** | `5.10.269-Nanairo-FinaSU` |
-| **Compatibility** | MistOS and the AOSP ROMs listed in [Other AOSP ROMs](#other-aosp-roms); tested on MistOS 5.1 Beta 20261025 (`fastboot boot`) |
-| **FinaSU** | `v1.6.4` (33211), built in · Tracepoint hooks |
+| **Version** | `1.0` |
+| **Linux** | `5.10.269-Nanairo-backslashxx` |
+| **Compatibility** | MistOS and the AOSP ROMs listed in [Other AOSP ROMs](#other-aosp-roms); tested on MistOS 20261025 (`fastboot boot`) |
+| **backslashxx/KernelSU** | `v3.3.1+52`, built in · syscall-table / branch-link hooks |
 | **SUSFS** | `2.4.0` |
 | **NoMount** | `v2.3.0` built in |
 | **DroidSpaces** | Supported |
@@ -52,7 +52,7 @@
 
 | Group | Included |
 |:--|:--|
-| **Root & hiding** | FinaSU integration · SUSFS · extra `/proc/kallsyms` hiding |
+| **Root & hiding** | backslashxx/KernelSU integration · SUSFS · extra `/proc/kallsyms` hiding |
 | **Containers** | DroidSpaces · PID namespaces · IPC / SYSVIPC |
 | **Networking** | TCP BBR · runtime congestion-control switching |
 | **Device** | mondrian production config · Goodix touch stability fixes |
@@ -62,72 +62,15 @@
 
 ## Latest Changes
 
-### 2.5.5
+### 1.0
 
-- FinaSU updated from `v1.6.3` to `v1.6.4` (33211); use the FinaSU `v1.6.4` manager
-- The only kernel change is in FinaSU's symbol resolver: the exact symbol lookup now stops at the first match; the rest of `v1.6.4` is the manager and `ksud`
-- Same NoMount v2.3.0, SUSFS v2.4.0, KMI, installer and ROM compatibility as 2.5.1
-
-### 2.5.1
-
-- FinaSU updated from `v1.6.2` to `v1.6.3` (33204); use the FinaSU `v1.6.3` manager
-- The new SELinux hook of `v1.6.3` is for kernels without SUSFS and is not installed on SUSFS builds, so it does not apply here; the SELinux context parser now stops at the first unknown user or role
-- Same NoMount v2.3.0, SUSFS v2.4.0, KMI, installer and ROM compatibility as 2.5
-
-### 2.5
-
-- NoMount updated from `v2.2.0` to `v2.3.0` (driver version 23): inode-based rules, faster opens of redirected files, memory and security fixes, and fixes for crashes with FUSE mounts and cgroup2
-- FinaSU updated from `v1.6.1` to `v1.6.2` (33203); its kernel side is unchanged, the new things are in the manager (theme import selection and theme preview); use the FinaSU `v1.6.2` manager
-- Same SUSFS v2.4.0, same KMI, same installer and same ROM compatibility as 2.1
-
-### 2.1
-
-- FinaSU updated from `v1.5.2` to `v1.6.1` (33198); use the FinaSU `v1.6.1` manager
-- SELinux hiding is now done by FinaSU itself: every type and allow rule KernelSU injects is registered as a SUSFS hidden entry, so the patch that 2.0.1 applied at build time is gone and the submodule is built as released
-- FinaSU now dispatches the SUSFS priority UID filter, so BRENE should see all 10 SUSFS functions
-- Same KMI as 2.0 and 2.0.1, same NoMount v2.2.0, same installer and same ROM compatibility
-
-### 2.0.1
-
-- Hides KernelSU's own SELinux types (`ksu`, `ksu_file`) from apps through SUSFS, as a patch applied over the KernelSU submodule at build time; same KMI as 2.0
-
-### 2.0
-
-- FinaSU updated from `v1.5.0` to `v1.5.1` (33177); use the FinaSU `v1.5.1` manager
-- Kernel side of FinaSU `v1.5.1` that applies here: SELinux hiding parses the context a process writes once, against the live policy, and handles blank and newline-only contexts correctly
-- Everything else is the same as 1.9: Tracepoint hooks, SUSFS `eb95da0` (v2.3.0, v2.4.0 is not supported by FinaSU yet), NoMount v2.2.0, same installer and same ROM compatibility
-
-### 1.9
-
-- FinaSU updated from `v1.4.4` to `v1.5.0` (33174); use the FinaSU `v1.5.0` manager
-- Kernel side of FinaSU `v1.5.0`: two SELinux fixes (policy generation tracking when the policy is updated at run time, and marking the original SELinux types for SELinux hiding)
-- Everything else is the same as 1.8: Tracepoint hooks, SUSFS `eb95da0` (v2.3.0, v2.4.0 is not supported by FinaSU yet), NoMount v2.2.0, same installer and same ROM compatibility
-
-### 1.8
-
-- FinaSU updated from `v1.2.1` to `v1.4.4` (33167); use the FinaSU `v1.4.4` manager. With FinaSU's 1.4 userspace, the r2 kernel could not list the kernel umount paths or report the hook type; 1.8 can
-- Hooks: FinaSU's default Tracepoint backend, as before (the new SUSFS Inline backend is not enabled)
-- SUSFS stays at `eb95da0` (v2.3.0): newer SUSFS commits change SELinux hiding in a way FinaSU does not support yet
-- `/proc/kallsyms` filter extended to the symbols FinaSU added since v1.2.1 (the vivo module filter and `get_try_umount`) and to older FinaSU symbols that r2 still showed
-- Same installer as 1.5, with the vendor module check; 1.5 was not published as a separate release
-- Exports the same symbol CRCs as r2 and 1.5, so the ROM compatibility below still holds; tested on the phone with MistOS 5.1 Beta 20261025 (`fastboot boot`, not flashed), where the installer's `kmicheck` was also run
-
-### 1.5
-
-- Same kernel as r2 (`5.10.269-Nanairo-FinaSU`, identical `Image`); this version changes the installer
-- The installer checks the ROM's `vendor_boot` and `vendor_dlkm` modules against the kernel before flashing and stops without writing anything if they would not load
-- `checkonly` package: tells whether a ROM is compatible and flashes nothing
-- Checked compatible: MistOS, the latest builds from Keosh (crDroid, Evolution X, Infinity-X, Lunaris, LineageOS, Axion), Infinity-X 4.1 by LF5 and crDroid 12.12 by Taha Keles; not compatible: AOSPA and PenguinOS
-
-### 5.10.269 r2
-
-- FinaSU `v1.2.1` (33074) built in, with the official FinaSU manager trusted in the release signature slot
-- SUSFS updated to `eb95da0` (v2.3.0), which fixes a use-after-free in the priority-uid filter
-- NoMount `v2.2.0` by maxsteeel built in; used as FinaSU's built-in NoMount backend, no metamodule needed
-- Extra `/proc/kallsyms` hiding for FinaSU's own driver symbols, validated against clean Equinox
-- Kernel named `5.10.269-Nanairo-FinaSU`
-- Vendor module CRCs checked against MistOS 5.1 Beta 20261025, 20261024, 20261023 and 20261011, and MistOS 5.0 Alpha 20260914
-- KMI verified against clean Equinox 5.10.269
+- First release of this edition
+- backslashxx/KernelSU `v3.3.1+52` (UAPI 6) built in as the `KernelSU/` submodule, instead of FinaSU; uses its own hook backend (ARM64 syscall-table / branch-link), not an inline fs/exec.c hook
+- backslashxx ships no SUSFS support of its own: a new interface was written for this edition (`KernelSU/kernel/extension/susfs.c`) with the SID lookups, the zygote/zygote_next umount handling and the SELinux rule registration
+- Same NoMount v2.3.0, SUSFS v2.4.0, BBR, DroidSpaces, installer and ROM compatibility as the other editions
+- `/proc/kallsyms` filter reworked for backslashxx's own symbols, checked against a clean Equinox build: 0 symbols that give away root
+- KMI verified against clean Equinox 5.10.269: 0 changed CRCs, 0 removed symbols
+- Vendor module CRCs checked against MistOS 20261025 and the latest Keosh builds (337 `vendor_boot` + 390 `vendor_dlkm`)
 
 [View full release notes](../../releases)
 
@@ -137,11 +80,11 @@
 
 Builds are published through **GitHub Releases**, with the SHA256 of each file on the release page.
 
-**Current package:** `Equinox-5.10.269-FinaSU-2.0-mondrian.zip`
+**Current package:** `Equinox-5.10.269-backslashxx-1.0-mondrian.zip`
 
-Download the release asset and flash the AnyKernel3 ZIP using a compatible recovery or kernel flasher. The ZIP only replaces the kernel `Image`, after checking that the ROM's vendor modules accept it; if you update the ROM, flash it again afterwards. Install the FinaSU manager from the release to manage root, modules and SUSFS.
+Download the release asset and flash the AnyKernel3 ZIP using a compatible recovery or kernel flasher. The ZIP only replaces the kernel `Image`, after checking that the ROM's vendor modules accept it; if you update the ROM, flash it again afterwards. Install backslashxx's manager to manage root and modules, and the `ksu_module_susfs` and NoMount modules from it to control SUSFS and NoMount.
 
-Not sure whether your ROM is compatible? Flash `Equinox-5.10.269-FinaSU-2.0-mondrian-checkonly.zip` first: it runs the same check and flashes nothing.
+Not sure whether your ROM is compatible? Flash `Equinox-5.10.269-backslashxx-1.0-mondrian-checkonly.zip` first: it runs the same check and flashes nothing.
 
 > GitHub-generated `Source code` archives are not flashable kernel packages.
 
@@ -164,7 +107,7 @@ The ZIP keeps the ROM's vendor modules (`vendor_boot` and `vendor_dlkm`), and th
 | LineageOS `lineage-22.2` (Android 15) | 5.10.245 | Not verified |
 | HyperOS / MIUI | | Not supported |
 
-Packages made with `scripts/equinox/package-finasu.sh` check this before flashing: `kmicheck` reads the ROM's modules from `vendor_boot` and `vendor_dlkm` and compares them with the kernel's own symbol table (`kmi.symvers`). If any module would be rejected (different CRC, a symbol this kernel does not export, a duplicate export or a different vermagic), the installer stops before writing anything and lists the modules. A ZIP with `nocheck` in its file name skips the check; one with `checkonly` runs the check and flashes nothing, to find out whether a ROM is compatible. Released packages from 1.8 on include this check (1.5 was not released separately); r2 does not.
+Packages made with `scripts/equinox/package-bsxx.sh` check this before flashing: `kmicheck` reads the ROM's modules from `vendor_boot` and `vendor_dlkm` and compares them with the kernel's own symbol table (`kmi.symvers`). If any module would be rejected (different CRC, a symbol this kernel does not export, a duplicate export or a different vermagic), the installer stops before writing anything and lists the modules. A ZIP with `nocheck` in its file name skips the check; one with `checkonly` runs the check and flashes nothing, to find out whether a ROM is compatible. Released packages from 1.8 on include this check (1.5 was not released separately); r2 does not.
 
 ---
 
@@ -190,7 +133,7 @@ If you find **Equinox Kernel** useful and would like to support its continued de
 
 ## Support Nanairo
 
-If this FinaSU edition is useful to you and you would like to support Nanairo8890's work on it (the FinaSU, SUSFS and NoMount integration, and the vendor module check), donations are welcome but entirely optional.
+If this backslashxx edition is useful to you and you would like to support Nanairo8890's work on it (the backslashxx/KernelSU, SUSFS and NoMount integration, and the vendor module check), donations are welcome but entirely optional.
 
 <div align="center">
 
@@ -206,11 +149,11 @@ If this FinaSU edition is useful to you and you would like to support Nanairo889
 - [**LineageOS/android_kernel_xiaomi_sm8450**](https://github.com/LineageOS/android_kernel_xiaomi_sm8450) — primary kernel base used by Equinox
 - [**LineageOS/android_kernel_qcom_sm8450**](https://github.com/LineageOS/android_kernel_qcom_sm8450) — Qualcomm common-kernel upstream used by Equinox
 - [**Android Common Kernel**](https://android.googlesource.com/kernel/common) / [**Linux Kernel**](https://www.kernel.org/) — Android kernel infrastructure and upstream Linux
-- [**FinaSU**](https://github.com/LyraVoid/FinaSU) by **LyraVoid**, based on [**KernelSU**](https://github.com/tiann/KernelSU) by **tiann** — kernel root implementation of this edition
+- [**backslashxx/KernelSU**](https://github.com/backslashxx/KernelSU) by **backslashxx**, a fork of [**KernelSU**](https://github.com/tiann/KernelSU) by **tiann** — kernel root implementation of this edition
 - [**SUSFS**](https://gitlab.com/simonpunk/susfs4ksu) by **simonpunk** — SUSFS integration for Linux 5.10
 - [**DroidSpaces**](https://github.com/ravindu644/Droidspaces-OSS) by **ravindu644** — container runtime and kernel requirements
-- [**NoMount**](https://github.com/maxsteeel/nomount) by **maxsteeel**, with a fix by **deref3046** — VFS path redirection, built in as FinaSU's NoMount backend
+- [**NoMount**](https://github.com/maxsteeel/nomount) by **maxsteeel**, with a fix by **deref3046** — VFS path redirection, built in
 - [**AnyKernel3**](https://github.com/osm0sis/AnyKernel3) by **osm0sis** — flashable kernel packaging
-- [**Nanairo8890**](https://github.com/nanairo8890) — FinaSU, SUSFS, BBR and NoMount integration of this edition
+- [**Nanairo8890**](https://github.com/nanairo8890) — backslashxx/KernelSU, SUSFS, BBR and NoMount integration of this edition
 
 Thanks to Qualcomm, LineageOS contributors, Android Common Kernel contributors, and the broader Linux kernel community for the upstream kernel, platform, and driver work that Equinox builds upon.

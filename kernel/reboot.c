@@ -303,7 +303,12 @@ EXPORT_SYMBOL_GPL(kernel_power_off);
 DEFINE_MUTEX(system_transition_mutex);
 
 #ifdef CONFIG_KSU_SUSFS
-extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
+// backslashxx edition: NOT ksu_handle_sys_reboot (supercall/supercall.c) — that one is wired
+// into backslashxx's own syscall-table/branch-link hooks, which always run the real reboot
+// afterward regardless of its return value. This call site instead needs "0 means handled,
+// skip the real reboot" (see below), which only susfs_handle_sys_reboot follows. See
+// KernelSU/kernel/extension/susfs.c.
+extern int susfs_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
 #endif
 /*
  * Reboot system call: for obvious reasons only root may call it,
@@ -321,7 +326,7 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 	int ret = 0;
 
 #ifdef CONFIG_KSU_SUSFS
-	ret = ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
+	ret = susfs_handle_sys_reboot(magic1, magic2, cmd, &arg);
 	if (ret) {
 		goto orig_flow;
 	}

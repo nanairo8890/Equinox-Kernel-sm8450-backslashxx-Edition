@@ -1,345 +1,42 @@
 Idioma: Português (Brasil)
 
-# Equinox Kernel edição FinaSU: Changelog
+# Equinox Kernel edição backslashxx: Changelog
 
 Edição de Nanairo8890, com permissão de LF52406
 Baseada no Equinox Kernel 5.10.269 para o POCO F5 Pro / Redmi K60 (`mondrian`)
-Problemas com esta edição: reporte-os ao Nanairo8890, não ao LF52406 nem ao LyraVoid
+Problemas com esta edição: reporte a Nanairo8890, não a LF52406 ou backslashxx
 
 ---
 
-## 2.5.5 (2026-11-18)
+## 1.0 (2026-11-18)
 
-O FinaSU passa para a v1.6.4
-Todo o resto é igual ao da 2.5.1
+Primeira versão desta edição
 
-**FinaSU v1.6.4**
-- O FinaSU passa da v1.6.3 para a v1.6.4 (`ff0e34f1`, versão 33211), continua no UAPI 6
-  Gerenciador oficial `FinaSU_v1.6.4_33211-release.apk`, com a mesma assinatura
-- A única mudança no kernel está no resolvedor de símbolos: a busca exata de um símbolo agora para na primeira correspondência
-- O resto da v1.6.4 é o gerenciador e o `ksud`: novos controles do filtro de UID prioritário para o SUSFS (a parte do kernel já estava no SUSFS v2.4.0), uma tela de abertura renovada, um seletor de animação do ícone de navegação e uma tela de gravação de módulos melhorada
+**backslashxx/KernelSU**
+- backslashxx/KernelSU v3.3.1+52 (UAPI 6) no lugar do FinaSU, embutido como submódulo `KernelSU/`
+  Usa seu próprio backend de hooks (tabela de syscalls / branch-link ARM64), não o hook Tracepoint do FinaSU
+  Manager oficial do backslashxx (pacote `me.weishu.kernelsu`)
+
+**SUSFS v2.4.0 e NoMount v2.3.0**
+- O backslashxx não traz suporte a SUSFS de fábrica: uma interface nova foi escrita para esta edição
+  (`KernelSU/kernel/extension/susfs.c`), com as buscas de SID, o tratamento de umount para zygote
+  e zygote_next, e o registro das regras de SELinux
+- NoMount v2.3.0 continua igual às outras edições: embutido, oculto de `/sys/module` e `/proc/kallsyms`
+- SUSFS e NoMount são controlados pelos próprios módulos root (`ksu_module_susfs` e o metamódulo
+  NoMount), instaláveis pelo manager do backslashxx como qualquer módulo do KernelSU
+
+**Filtro de `/proc/kallsyms`**
+- Refeito para os símbolos próprios do backslashxx: ficou em 0 símbolos que denunciam root
+  (os únicos símbolos que continuam visíveis são cópias genéricas de funções de acesso à memória
+  que já aparecem centenas de vezes em qualquer kernel stock, sem relação com o driver)
 
 **O que continua igual**
-- NoMount v2.3.0, SUSFS v2.4.0, hooks Tracepoint, BBR, DroidSpaces, o filtro de `/proc/kallsyms` e o instalador
-- A edição BakaSU continua na 2.5.1
+- BBR, DroidSpaces e o instalador
 
 **Verificado**
-- Testado no telefone (POCO F5 Pro, MistOS 5.1 Beta 20261025) com um boot a partir de `fastboot boot`, sem gravar nada: 385 módulos carregam, o SELinux está em Enforcing, `nm version` mostra 23 (720), o NoMount carrega, o SUSFS v2.4.0 é inicializado, o `ksud` é 1.6.4 com UAPI 6, o `dmesg` não mostra Oops nem panic, e `/proc/kallsyms` não mostra nenhum nome que revele root
-- KMI em relação ao Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (apenas `put_pid_ns` é adicionado)
-- Os CRCs dos módulos do vendor coincidem (337 de `vendor_boot` e 390 de `vendor_dlkm`) com o MistOS 5.1 Beta 20261025 e com as 11 últimas builds da Keosh; AOSPA e PenguinOS continuam não compatíveis
-- A compilação não mostra avisos nem erros no código do FinaSU, do SUSFS e do NoMount
-- O Infinity-X 4.1 não foi verificado de novo nesta versão porque seus módulos não estão mais na máquina de compilação
-- O filtro de `/proc/kallsyms` foi verificado no kernel compilado: nenhum símbolo do driver que continua visível revela root, e o NoMount não adiciona símbolos visíveis novos
-
----
-
-## 2.5.1 (2026-11-15)
-
-O FinaSU passa para a v1.6.3
-Todo o resto é igual ao da 2.5
-
-**FinaSU v1.6.3**
-- O FinaSU passa da v1.6.2 para a v1.6.3 (`06d71e8a`, versão 33204), continua no UAPI 6
-  Gerenciador oficial `FinaSU_v1.6.3_33204-release.apk`, com a mesma assinatura
-- O novo hook de SELinux (`inode_setxattr`) é para kernels sem SUSFS e não é instalado em builds com SUSFS, então não se aplica a esta edição
-- O analisador de contextos do SELinux agora para no primeiro usuário ou papel desconhecido, como o nativo
-
-**O que continua igual**
-- NoMount v2.3.0, SUSFS v2.4.0, hooks Tracepoint, BBR, DroidSpaces, o filtro de `/proc/kallsyms` e o instalador
-- A edição BakaSU recebe os dois commits mais novos do BakaSU (correções de compilação) na sua versão 2.5.1
-
-**Verificado**
-- Testado no telefone (POCO F5 Pro, MistOS 5.1 Beta 20261025): gravado na partição de boot e iniciado a partir dela, 385 módulos carregam e 0 são rejeitados, o SELinux está em Enforcing, `nm version` mostra 23 (720), o NoMount conclui o boot com segurança, o SUSFS v2.4.0 é inicializado, o `ksud` é 1.6 com UAPI 6, sem Oops nem panic, e `/proc/kallsyms` não mostra nenhum nome que revele root
-- O teste do NoMount usou um módulo com um único arquivo redirecionado; as outras novidades do driver (faixas de UID, casos opacos e whiteout, o cache de arquivos já abertos) não foram testadas
-- KMI em relação ao Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (apenas `put_pid_ns` é adicionado)
-- Os CRCs dos módulos do vendor coincidem (337 de `vendor_boot` e 390 de `vendor_dlkm`) com o MistOS 5.1 Beta 20261025 e com as 11 últimas builds da Keosh; AOSPA e PenguinOS continuam não compatíveis
-- O Infinity-X 4.1 não foi verificado de novo nesta versão porque seus módulos não estão mais na máquina de compilação
-- O filtro de `/proc/kallsyms` foi verificado no kernel compilado: nenhum símbolo do driver que continua visível revela root, e o NoMount não adiciona símbolos visíveis novos
-
----
-
-## 2.5 (2026-11-15)
-
-O NoMount passa para a v2.3.0 e o FinaSU para a v1.6.2
-
-**NoMount v2.3.0**
-- O driver integrado passa da v2.2.0 para a v2.3.0 (`7914458`, versão de driver 23, contador 720)
-- As regras agora seguem o inode do arquivo e não o texto do caminho, então continuam funcionando se o destino for renomeado ou movido
-- Arquivos redirecionados abrem mais rápido: o driver reutiliza um arquivo de apoio já aberto
-- Correções de memória (uma leitura fora dos limites e casos de uso após liberação) e de segurança (verificações de LSM ao alterar xattr, bits SUID/SGID removidos nos inodes virtuais)
-- Correções de travamentos com montagens FUSE e com cgroup2
-- As regras carregam mais rápido na inicialização
-- As mudanças desta edição continuam: apps que têm os módulos desmontados veem o sistema original, e o NoMount segue oculto em `/sys/module` e `/proc/kallsyms`
-- Por que o kernel é atualizado: o metamódulo v2.3.0 também funciona com um driver mais antigo (22 ou mais novo), então atualizar o kernel não é obrigatório para usá-lo, mas as correções acima estão no driver do kernel, por isso só um kernel atualizado as traz, e o NoMount pede para atualizar juntos o driver e o metamódulo
-- Se o NoMount mostrar "Bootloop Prevented", ele se desativou sozinho depois de uma inicialização que não terminou (por exemplo ao testar um kernel sem gravá-lo): apague o arquivo `disable` em `/data/adb/nomount/` e reinicie, ou instale o módulo do NoMount de novo
-- O FinaSU continua usando-o como seu motor de montagem NoMount, sem metamódulo
-
-**FinaSU v1.6.2**
-- O FinaSU passa da v1.6.1 para a v1.6.2 (`6cc294cc`, versão 33203), continua no UAPI 6
-  Gerenciador oficial `FinaSU_v1.6.2_33203-release.apk`, com a mesma assinatura
-- A parte do kernel do FinaSU não muda entre a v1.6.1 e a v1.6.2; a novidade está no gerenciador (escolher quais partes de um tema importar, e uma prévia de temas) e em uma limpeza do `ksud`
-
-**O que continua igual**
-- SUSFS v2.4.0, hooks Tracepoint, BBR, DroidSpaces, o filtro de `/proc/kallsyms` e o instalador
-- A edição BakaSU recebe a mesma atualização do NoMount na sua versão 2.5
-
-**Verificado**
-- Testado no telefone (POCO F5 Pro, MistOS 5.1 Beta 20261025) iniciando este kernel com `fastboot boot`, sem gravá-lo: inicia, 385 módulos carregam e 0 são rejeitados, SELinux em Enforcing, `nm version` informa 23 (720), o NoMount injeta as regras do módulo e a inicialização termina com segurança, o SUSFS v2.4.0 informa 10 funções, o `ksud` é 1.6.2 com UAPI 6, e `/proc/kallsyms` não mostra nenhum nome que revele o root
-- O teste do NoMount usou um módulo com um único arquivo redirecionado; as outras novidades do driver (faixas de UID, casos opacos e de whiteout, o cache de arquivos já abertos) não foram testadas
-- KMI em relação ao Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (só `put_pid_ns` é adicionado)
-- Os CRCs dos módulos do vendor batem (337 do `vendor_boot` e 390 do `vendor_dlkm`) com o MistOS 5.1 Beta 20261025 e com as 11 últimas builds da Keosh; AOSPA e PenguinOS continuam sem ser compatíveis
-- O Infinity-X 4.1 não foi verificado de novo nesta versão porque os módulos dele não estão mais na máquina de compilação
-- O filtro de `/proc/kallsyms` foi verificado no kernel compilado: nenhum dos símbolos do driver que ficam visíveis revela o root, e o NoMount não adiciona símbolos visíveis novos
-
----
-
-## 2.1 (2026-11-12)
-
-Desculpe por lançar outra versão tão cedo, poucas horas depois da 2.0.1
-A 2.0.1 saiu para ocultar o quanto antes os tipos de SELinux do KernelSU, com um patch próprio; no mesmo dia o FinaSU lançou a v1.6.1, que faz essa ocultação de forma nativa e mais completa e ainda traz correções de segurança, então não fazia sentido deixá-la esperando
-Se você já instalou a 2.0.1 não há problema: a 2.1 é instalada por cima como sempre, e vale atualizar o manager também
-
-**FinaSU v1.6.1**
-- O FinaSU passa da v1.5.2 para a v1.6.1 (`14a71d95`, versão 33198), continua em UAPI 6
-  Manager oficial `FinaSU_v1.6.1_33198-release.apk`, com a mesma assinatura
-- Segurança (manager e `ksud`): nomes de perfil com separadores de caminho, NUL, quebras de linha ou componentes de caminho relativo são rejeitados, e os argumentos passados aos comandos do shell root são escapados
-- Ao trocar o mecanismo de montagem para NoMount, o diretório de módulos é criado antes, se não existir
-
-**Ocultação de SELinux nativa**
-- Desde a v1.6.0, o FinaSU registra no SUSFS todos os tipos e todas as regras allow que o KernelSU adiciona à política, não só `ksu` e `ksu_file` como fazia o patch da 2.0.1
-- Por isso o patch da 2.0.1 foi removido: o submódulo do FinaSU é compilado exatamente como o LyraVoid o publica
-- O FinaSU não altera mais o número de sequência da política de um jeito que um kernel de fábrica não mostraria
-
-**Filtro de prioridade do SUSFS**
-- O FinaSU agora despacha o comando do filtro de prioridade por UID do SUSFS v2.4.0 ("Hide third party apps" no BRENE), que não tinha efeito até a 2.0.1
-
-**O que continua igual**
-- SUSFS v2.4.0, NoMount v2.2.0, hooks Tracepoint, BBR, o filtro do `/proc/kallsyms` e o instalador
-- A edição BakaSU não muda e continua na 2.0.1: o BakaSU não publicou nada novo desde o commit `548d1dda`, que essa versão já inclui, então desta vez só a edição FinaSU é atualizada
-- Continua sem deixar o Duck Detector nem detectores parecidos no verde: restam sinais que não vêm do kernel, como o TEE (TEESimulator), os tipos do Vector/LSPosed e contextos da própria ROM
-
-**Verificado**
-- Testado no telefone (POCO F5 Pro, MistOS 5.1 Beta 20261025) iniciando com `fastboot boot` e depois gravado no `boot_a`: inicia, 385 módulos carregados e 0 rejeitados, SELinux em Enforcing, root com `u:r:ksu:s0`, `ksud` 1.6.1, BBR e NoMount 22 (605)
-- Com o UID de um app, as consultas de SELinux a `ksu` e `ksu_file` são rejeitadas do mesmo jeito que as de um tipo que não existe; o root continua vendo os dois
-- O SUSFS v2.4.0 informa 10 funções, incluindo o filtro de prioridade; o filtro em si não foi testado em funcionamento
-- KMI em relação ao Equinox limpo: 0 CRC alterados e 0 símbolos removidos (só adiciona `put_pid_ns`); exporta os mesmos CRC da 2.0 e da 2.0.1, então as ROMs compatíveis são as mesmas
-- Os CRC dos módulos do vendor batem (337 do `vendor_boot` e 390 do `vendor_dlkm`) com o MistOS 5.1 Beta 20261025 e o Infinity-X 4.1
-
----
-
-## 2.0.1 (2026-11-12)
-
-Mesmo kernel que a 2.0 (FinaSU v1.5.2, SUSFS v2.4.0, NoMount v2.2.0); a 2.0.1 só adiciona ocultar os tipos de SELinux do próprio KernelSU
-
-**Ocultar os tipos de SELinux do KernelSU dos apps**
-- O KernelSU cria seus próprios tipos na política do SELinux (`ksu` e `ksu_file`); um app podia confirmar que existiam consultando-os pelo sistema de arquivos do SELinux (`selinuxfs`), e isso entregava o root
-- Agora, ao aplicar suas regras, o kernel registra esses dois tipos na lista de tipos ocultos do SUSFS, que só é consultada para os apps (uid 10000 ou maior)
-- Para um app, `ksu` e `ksu_file` passam a responder como inexistentes (EINVAL), como um contexto que não está na política; a resolução de contextos do próprio kernel e a concessão de root não mudam, porque essa lista não participa das decisões do SELinux
-- É a mesma abordagem que o Magisk e o LSPosed já usam para os próprios tipos
-
-**Não muda a KMI**
-- A mudança está no código do KernelSU e não mexe em símbolos exportados: 0 CRC alterados e 0 símbolos removidos em relação ao Equinox limpo (só adiciona `put_pid_ns`, igual à 2.0)
-- Os CRC dos módulos do vendor continuam batendo (337 do `vendor_boot` e 390 do `vendor_dlkm`), então as ROMs compatíveis são as mesmas da 2.0
-
-**O que não resolve**
-- Não deixa o Duck Detector nem detectores parecidos no verde: continuam sinais que não vêm do kernel, como o TEE (TEESimulator), os tipos do Vector/LSPosed e contextos da própria ROM
-- Pelo kernel só dá para ocultar o que o kernel adiciona
-
-**Como é feito**
-- A mudança é aplicada como um patch sobre o submódulo do KernelSU na hora de compilar (`scripts/equinox/patches/0001-susfs-hide-ksu-types.patch`), então o submódulo fica intacto (pinned) e o FinaSU não é forkado
-
-**Verificado**
-- Testado no telefone (POCO F5 Pro, MistOS 5.1 Beta 20261025): inicia com `fastboot boot` e depois foi gravado no `boot_a`; 385 módulos carregados e 0 rejeitados, SELinux em Enforcing, root com `u:r:ksu:s0`
-- As consultas de SELinux dos apps a `ksu` e `ksu_file` passam a retornar EINVAL (antes elas os reconheciam), e o `dmesg` mostra `susfs: hide ksu type ... ret=0`
-- KMI em relação ao Equinox limpo: 0 CRC alterados e 0 símbolos removidos
-
----
-
-## 2.0 (2026-11-10)
-
-Kernel novo com FinaSU v1.5.2 e SUSFS v2.4.0
-O instalador, o NoMount e o resto são iguais aos da 1.9
-
-**FinaSU v1.5.2**
-- O FinaSU passa da v1.5.0 para a v1.5.2 (`289e292a`, versão 33182), continua no UAPI 6
-  Gerenciador oficial `FinaSU_v1.5.2_33182-release.apk`, mesma assinatura
-- Gerenciador e `ksud`: aceita o SUSFS v2.4.0 (só no gerenciador), corrige syscalls pulados pelo seccomp no x86_64 e os links de imagens
-- Kernel: a ocultação do SELinux da v1.5.1 (lê o contexto uma vez na política ativa)
-
-**SUSFS**
-- Passa para a **v2.4.0**: o núcleo (`fs/susfs.c`) e os hooks (`security/selinux/*`, `kernel/sys.c`, `block/ioprio.c`) foram atualizados
-  O filtro de prioridade da v2.4.0 fica desligado: o comando dele ainda não está integrado no gerenciador
-
-**Verificado**
-- Testado no aparelho (POCO F5 Pro, MistOS 5.1 Beta 20261025): inicia com `fastboot boot` e depois foi gravado em `boot_a`; 385 módulos, Enforcing, root com `u:r:ksu:s0` e o SUSFS inicia como v2.4.0
-- KMI em relação ao Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (só o `put_pid_ns` é adicionado)
-
----
-
-## 1.9 (2026-11-08)
-
-Kernel novo com o FinaSU v1.5.0
-O instalador, o SUSFS, o NoMount e todo o resto são iguais aos da 1.8
-
-**FinaSU v1.5.0**
-- O FinaSU passa da v1.4.4 para a v1.5.0 (`fbf8e003`, versão 33174)
-  Continua no UAPI 6
-  Use o gerenciador oficial do FinaSU v1.5.0 (`FinaSU_v1.5.0_33174-release.apk`), que tem a mesma assinatura de antes
-- Kernel: duas correções de SELinux do FinaSU
-  Uma corrige como é contada a geração da política quando a política SELinux é atualizada em execução (por exemplo, por um módulo)
-  A outra marca quais tipos do SELinux estavam na política original, para que a ocultação do SELinux não precise mais procurar de novo nas tabelas da política para distingui-los dos que o FinaSU adiciona
-- As outras mudanças da v1.5.0 são do gerenciador e do `ksud` (já estavam no `ksud` 1.4.5)
-- Hooks: o backend Tracepoint, como antes
-
-**SUSFS**
-- Continua em `eb95da0` (v2.3.0)
-  O SUSFS v2.4.0 saiu em 2026-11-08 com um filtro de prioridade novo e mudanças no lado KernelSU do patch; o FinaSU ainda não os suporta, então ele será atualizado quando suportar
-
-**Verificado**
-- KMI em relação ao Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (só `put_pid_ns` é adicionado)
-  Exporta exatamente os mesmos CRCs da r2 e da 1.8, então as ROMs compatíveis continuam as mesmas
-- Os CRCs dos módulos do vendor batem (337 do `vendor_boot` e 390 do `vendor_dlkm`) com o MistOS 5.1 Beta 20261025, o Project Infinity-X 4.1 e as últimas builds da Keosh; AOSPA e PenguinOS continuam sem ser compatíveis
-- **Testado no telefone** (POCO F5 Pro, MistOS 5.1 Beta 20261025) iniciando este kernel com `fastboot boot`, sem gravá-lo: inicia, 385 módulos carregados (os mesmos da 1.8), SELinux em Enforcing, BBR, NoMount oculto em `/sys/module`, e o gerenciador FinaSU v1.5.0 mostra que funciona (integrado, versão 33174-6, hooks Tracepoint, NoMount v2.2.0, SUSFS v2.3.0)
-- Nesse teste o shell não tinha root, então `dmesg` e `/proc/kallsyms` não foram lidos no telefone; o filtro de kallsyms foi verificado no kernel compilado (95 símbolos do driver ficam visíveis, nenhum que revele o root)
-
----
-
-## 1.8 (2026-11-03)
-
-Kernel novo com o FinaSU v1.4.4 e o mesmo instalador da 1.5, que verifica os módulos do vendor antes de instalar
-A versão 1.5 não foi publicada como release separada
-A release também traz o pacote como `Equinox-5.10.269-FinaSU-1.8-mondrian-checkonly.zip`, que só faz a verificação
-
-**FinaSU v1.4.4**
-- O FinaSU passa da v1.2.1 para a v1.4.4 (`53fcde65`, versão 33167)
-  Continua no UAPI 6
-  Use o gerenciador oficial do FinaSU v1.4.4 (`FinaSU_v1.4.4_33167-release.apk`), que tem a mesma assinatura de antes
-- Com o userspace 1.4 do FinaSU, o kernel da r2 e da 1.5 não conseguia listar os caminhos de desmontagem do kernel (`ksud kernel umount list`) nem informar ao gerenciador o tipo de hook; a 1.8 consegue
-- Hooks: o backend Tracepoint, o padrão do FinaSU e o mesmo de sempre
-  O novo backend SUSFS Inline não é ativado
-- O novo filtro de módulos anti-root da vivo fica desligado: ele só liga com um parâmetro na linha de comando do kernel que o MistOS não define (verificado desligado no telefone)
-- O instalador mostra FinaSU v1.4.4 (33167)
-
-**SUSFS**
-- Continua em `eb95da0` (v2.3.0)
-  Desde 31 de outubro, o SUSFS mudou a ocultação do SELinux para um modelo que o FinaSU ainda não suporta: o patch não chama mais as funções do FinaSU e precisa que o KernelSU registre os tipos e as regras do SELinux
-  Com o FinaSU, o SELinux ficaria sem ocultação, então o SUSFS será atualizado quando o FinaSU adotar esse modelo
-- O filtro de prioridade do SUSFS (`set_priority_uid_filter`, "Hide third party apps" no BRENE) continua sem efeito, porque o FinaSU não despacha esse comando
-  O BRENE v0.0.75 conta 10 funções do kernel e aqui verá 9
-
-**Mais símbolos ocultos em /proc/kallsyms**
-- O FinaSU v1.3 a v1.4.4 adicionou símbolos que o filtro não cobria: o filtro de módulos da vivo (`vivo_module_filter`, o parâmetro dele, os wrappers de `init_module`/`finit_module` e as funções auxiliares deles) e `get_try_umount`
-  Agora eles são ocultados, junto com símbolos mais antigos do FinaSU que a r2 também deixava visíveis: `add_try_umount`, o parâmetro `preinit`, `do_stop_input_hook`, `read_proxy`/`read_iter_proxy` e `release_perm_data`
-- Cada prefixo novo foi verificado contra um Equinox limpo e contra os módulos do vendor do MistOS 20261025 e do Infinity-X 4.1, que também aparecem em `/proc/kallsyms`: nenhum coincide
-
-**Outras mudanças**
-- O `scripts/equinox/build-finasu.sh` verifica se a configuração usa o backend Tracepoint e tem `CONFIG_KALLSYMS_ALL`, que o FinaSU exige desde a v1.3.1 para ser integrado ao kernel
-
-**Se você usa o BRENE**
-- Não configure o SUSFS pelo gerenciador do FinaSU enquanto usar o BRENE: os dois escrevem a mesma configuração e vale a última
-- O BRENE reaplica `su_compat`, `kernel_umount` e `selinux_hide` a cada inicialização; mude essas opções pela WebUI dele
-- Se `uname -r` aparecer com hífen duplo (`5.10.269--N-g...`), é o BRENE: ele monta o nome falso com um dado de KMI que não encontra neste kernel
-  Resolva com um uname personalizado no BRENE
-
-**Verificado**
-- KMI contra o Equinox limpo: 0 CRC alterados e 0 símbolos removidos (só é adicionado `put_pid_ns`)
-  Exporta exatamente os mesmos CRC da r2 e da 1.5, então as ROMs compatíveis com a 1.5 continuam compatíveis
-- Os CRC dos módulos do vendor (337 de `vendor_boot` e 390 de `vendor_dlkm`) coincidem no MistOS 5.1 Beta 20261025 (os mesmos módulos do 20261024 e do 20261023), no Project Infinity-X 4.1, no MistOS 5.0 Alpha 20260914 e nas builds mais recentes do Keosh; AOSPA e PenguinOS continuam incompatíveis
-- **Testado no telefone** (POCO F5 Pro, MistOS 5.1 Beta 20261025), iniciando este kernel com `fastboot boot`, sem instalá-lo: inicializa, 385 módulos carregados e 0 rejeitados, root funciona, SELinux em Enforcing, sem panics nem avisos, NoMount carregado, SUSFS v2.3.0, BBR, e `/proc/kallsyms` retorna 0 para todos os nomes reveladores
-- A verificação do instalador (`kmicheck` do zip 1.8, com as opções do instalador) também foi executada no telefone: compatível com o MistOS 5.1 Beta 20261025 e com o `vendor_dlkm` do próprio telefone (725 módulos, 0 problemas) e incompatível com o AOSPA calcite
-  O zip completo não foi instalado
-
----
-
-## 1.5 (2026-10-31)
-
-Mesmo kernel da r2 (`5.10.269-Nanairo-FinaSU`, a mesma Image); esta versão muda o instalador
-A release também traz o pacote como `Equinox-5.10.269-FinaSU-1.5-mondrian-checkonly.zip`, que só faz a verificação
-
-**Verificação dos módulos do vendor antes de instalar**
-- O instalador lê os módulos do vendor da ROM em `vendor_boot` e `vendor_dlkm` e os compara, com o `kmicheck`, com a tabela de símbolos do próprio kernel antes de gravar qualquer coisa
-  Se algum módulo fosse rejeitado (CRC diferente, um símbolo que este kernel não exporta, uma exportação duplicada ou um vermagic diferente), ele para, lista os módulos e deixa o aparelho como estava
-  Os módulos de `modules.blocklist` não são verificados
-  Um zip com `nocheck` no nome pula a verificação; um com `checkonly` só faz a verificação e não instala nada, para testar qualquer ROM sem risco
-- Novo script de empacotamento `scripts/equinox/package-finasu.sh`, que adiciona ao zip do AnyKernel3 o `kmicheck` (uma ferramenta arm64 estática de 8 KB, sem libc), o `kmi.symvers` e o `kmi.vermagic`
-
-**ROMs verificadas com o kernel r2**
-- Compatíveis, últimas builds do Keosh com o kernel `5.10.269-gki-g1598dc02ea84` (os CRC dos 337 módulos de `vendor_boot` e dos 390 de `vendor_dlkm` coincidem): crDroid 12.12 (20260928), Evolution X 11.11, Infinity-X 3.12 (VANILLA, GAPPS core e extra, 29.09.2026), Lunaris 3.12 (VANILLA e GMS), LineageOS 23.2 (20260929) e Axion 2.8 (VANILLA e GMS)
-- Também compatíveis: Infinity-X 4.1 do LF5 (17.10.2026), e crDroid 12.12 do Taha Keles (20260930, kernel `5.10.260-Weil+`), cujos 725 módulos fora da blocklist o `kmicheck` leu do zip OTA; o kernel dele tem 69 exportações com outros CRC (KVM, audit, Bluetooth `hci_conn_*`), e nenhum módulo as usa
-- Não compatíveis: AOSPA calcite (a17-gms 20261012, a17-microg 20261013) e PenguinOS celerity (20261011)
-  Usam um kernel próprio, `5.10.269-beryl-7156c6f9fb`, com 376 + 279 módulos e quase todos os CRC diferentes, então a verificação de módulos interrompe o instalador nelas
-
-**Correções**
-- O `build-finasu.sh` esperava a versão `5.10.269-Nanairo` e parava antes de compilar desde a mudança de nome da r2; agora espera `5.10.269-Nanairo-FinaSU`
-
----
-
-## 5.10.269 r2 (2026-10-27)
-
-**Nome do kernel**
-- A versão do kernel agora mostra `5.10.269-Nanairo-FinaSU` (antes `5.10.269-Nanairo`)
-  Os módulos do vendor continuam carregando: com MODVERSIONS só contam os CRC, não o nome
-  No telefone o gerenciador mostra o `uname` que o BRENE falsifica, não o nome real; o real está em `/proc/version` e no `dmesg`
-
-**Mais símbolos ocultos em /proc/kallsyms**
-- O filtro do SUSFS oculta os nomes com os prefixos de KernelSU/SUSFS/NoMount, mas o FinaSU exporta muitos símbolos cujo nome não começa por esses (`crown_manager`, `apk_sign_keys`, `dynamic_manager_*`, `selinux_hide_*`, `sulog_*`, `avc_spoof_*`, `kernel_umount_*`, `uts_view_*`, os handlers `do_get_/do_set_` das supercalls, a maquinaria de hooks e de netisolate, etc.)
-  Agora o filtro também os oculta
-- Cada prefixo foi verificado contra um Equinox limpo e não coincide com nenhum símbolo desse kernel: só são ocultados os símbolos do próprio FinaSU
-  Os nomes genéricos que também existem no kernel de fábrica (`add_rule`, `cache_sid`, `context_struct_compute_av`, etc.) são deixados de propósito, porque ocultá-los por prefixo também ocultaria símbolos legítimos do kernel
-
-**Igual à r1**
-- FinaSU v1.2.1 (33074), SUSFS v2.3.0, NoMount v2.2.0, BBR, sobre o Equinox limpo
-
-**Testado no telefone** (POCO F5 Pro, MistOS 5.1 Beta 20261025)
-- Inicializa. 0 módulos do vendor rejeitados
-  Root funciona, SELinux em Enforcing, sem panics
-- `/proc/kallsyms` retorna 0 para todos os prefixos adicionados e 0 para o padrão revelador completo; os símbolos normais do kernel (`vfs_read`, `module_layout`, `input_event`) continuam presentes
-
----
-
-## 5.10.269 r1 (2026-10-27)
-
-**Mudanças em relação ao Equinox 5.10.269**
-- **Root: FinaSU** de LyraVoid (um fork do KernelSU de tiann) no lugar do KernelSU-Next, como submódulo `KernelSU/` em `be19eb90` (`v1.2.1`, versão 33074), integrado ao kernel
-  O FinaSU usa UAPI 6
-  - **Precisa do gerenciador oficial do FinaSU** (`FinaSU_v1.2.1_33074-release.apk`, pacote `me.yuki.fina`)
-    O kernel confia no certificado de assinatura desse gerenciador, no slot de confiança de release do FinaSU; os gerenciadores da família KernelSU (BakaSU, ReSukiSU, KernelSU, KernelSU-Next) são reconhecidos mas não recebem permissões
-  - Preinit de módulos ativo (`initrc` e `preinit/` dos módulos)
-- **SUSFS v2.3.0** da branch `gki-android12-5.10` do simonpunk em `eb95da0`, usando o suporte a SUSFS do FinaSU
-  O `eb95da0` corrige um uso de memória liberada no filtro de prioridade
-  O FinaSU não despacha alguns comandos do SUSFS (entre eles o novo `SET_PRIORITY_UID_FILTER` e os antigos de caminhos de sdcard/data), então essas funções ficam indisponíveis
-- **NoMount v2.2.0** de maxsteeel integrado (`fs/nomount`, `CONFIG_NOMOUNT=y`, commit `bf1847f`), com a correção de deref3046
-  O FinaSU detecta o driver integrado pela API de chaves (protocolo 22) e não carrega o próprio `nomount.ko`, então **não é necessário o metamódulo**: escolha NoMount como backend de montagem no gerenciador, e remova o metamódulo do NoMount se estiver instalado
-- **BBR** como controle de congestionamento TCP padrão (o Equinox o inclui mas inicia com CUBIC)
-  O CUBIC continua disponível e pode ser trocado em tempo de execução
-- São mantidas três mudanças próprias do NoMount: os apps cujos módulos o FinaSU/SUSFS desmonta veem o sistema original, não há `/sys/module/nomount/version` (o `nm version` continua funcionando), e o filtro de kallsyms do SUSFS oculta os símbolos do NoMount
-
-**Correções sobre uma integração simples**
-- O patch GKI do SUSFS declara as chaves dos hooks em linha `ksu_is_input_hook_enabled` e `ksu_is_init_rc_hook_enabled` como `static_key_true`, mas o FinaSU as define com `DEFINE_STATIC_KEY_FALSE` e instala os próprios hooks
-  No arm64 o tipo cruzado deixaria os hooks em linha do SUSFS sempre ativos (contagem dupla da tecla de volume para baixo); esta edição as declara `static_key_false`, como o FinaSU espera
-- São aplicadas as realocações de KMI do DroidSpaces do Equinox (SYSVIPC e POSIX_MQUEUE para as reservas KABI do Android); sem elas mudam cerca de 9500 CRC de símbolos
-
-**Igual ao Equinox**
-- Linux 5.10.269 com a config de mondrian do Equinox
-- DroidSpaces com o perfil KMI-safe do Equinox
-- Correções do touch Goodix, Clang CFI e MODVERSIONS
-- Instalação por AnyKernel3
-
-**Detalhes técnicos**
-- Compilado com Clang da AOSP (`clang-r584948`) e ThinLTO
-- Antes de empacotar: verificação de KMI contra o Equinox limpo (0 CRC alterados, 0 símbolos removidos; só é adicionado o `put_pid_ns`), e CRC dos módulos do vendor contra o MistOS 5.1 Beta 20261025, 20261024, 20261023 e 20261011, e o MistOS 5.0 Alpha 20260914 (337 módulos de `vendor_boot` e 390 de `vendor_dlkm` em cada um)
-- O `/proc/version` mostra `Nanairo@Equinox`
-  O `set_uname` do SUSFS só muda o que o `uname` retorna
-
----
-
-## Créditos
-- **[LF52406](https://github.com/LF52406)**: Equinox Kernel, a base desta edição
-  Apoio: [PayPal](https://www.paypal.me/LF52406) · [Patreon](https://patreon.com/InfernalGT) · [Boosty](https://boosty.to/infernalgt/donate)
-- [LineageOS](https://github.com/LineageOS/android_kernel_xiaomi_sm8450) e [Android Common Kernel](https://android.googlesource.com/kernel/common)
-- [FinaSU](https://github.com/LyraVoid/FinaSU) de **LyraVoid**, baseado no [KernelSU](https://github.com/tiann/KernelSU) de **tiann**
-- [SUSFS](https://gitlab.com/simonpunk/susfs4ksu) de **simonpunk**
-- [DroidSpaces](https://github.com/ravindu644/Droidspaces-OSS) de **ravindu644**
-- [NoMount](https://github.com/maxsteeel/nomount) de **maxsteeel**, com uma correção de **deref3046**
-- [AnyKernel3](https://github.com/osm0sis/AnyKernel3) de **osm0sis**
-- **[Nanairo8890](https://github.com/nanairo8890)**: integração de FinaSU, SUSFS, BBR e NoMount no Equinox
+- KMI contra o Equinox limpo: 0 CRCs alterados e 0 símbolos removidos (só `put_pid_ns` é adicionado)
+- Os CRCs dos módulos do vendor coincidem (337 do `vendor_boot` e 390 do `vendor_dlkm`) com o
+  MistOS 20261025 e com 11 das 11 ROMs aplicáveis da Keosh; AOSPA e PenguinOS não entram nesta
+  lista porque usam seu próprio kernel
+- A compilação não mostra avisos próprios
+- O filtro de `/proc/kallsyms` foi conferido no kernel compilado
