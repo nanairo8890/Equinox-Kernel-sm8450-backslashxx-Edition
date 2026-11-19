@@ -8,32 +8,32 @@ Problems with this edition: report them to Nanairo8890, not to LF52406 or backsl
 
 ---
 
-## 1.0 (2026-11-18)
+## 1.0 (2026-11-19)
 
 First release of this edition
 
 **backslashxx/KernelSU**
 - backslashxx/KernelSU v3.3.1+52 (UAPI 6) instead of FinaSU, built in as the `KernelSU/` submodule
-  Uses its own hook backend (syscall table / ARM64 branch-link), not FinaSU's Tracepoint hook
+  Uses its own hook backend (syscall table, `KSU_TAMPER_SYSCALL_TABLE`, Clang CFI compliant), not FinaSU's Tracepoint hook
   Official backslashxx manager (package `me.weishu.kernelsu`)
 
-**SUSFS v2.4.0 and NoMount v2.3.0**
+**SUSFS v2.4.0 and NoMount v2.3.1**
 - backslashxx ships no SUSFS support of its own: a new interface was written for this edition
   (`KernelSU/kernel/extension/susfs.c`), with the SID lookups, the zygote/zygote_next umount
   handling and the SELinux rule registration
-- NoMount v2.3.0 stays the same as the other editions: built in, hidden from `/sys/module` and `/proc/kallsyms`
+- NoMount v2.3.1 stays the same as the other editions: built in, hidden from `/sys/module` and `/proc/kallsyms`
 - SUSFS and NoMount are controlled from their own root modules (`ksu_module_susfs` and the
   NoMount metamodule), installable from backslashxx's manager like any KernelSU module
 
 **`/proc/kallsyms` filter**
 - Reworked for backslashxx's own symbols: down to 0 symbols that give away root
-  (the only symbols still visible are generic memory-access helper copies already present
-  hundreds of times in any stock kernel, unrelated to the driver)
+  (no driver symbol is left visible, the syscall table hook's own symbols included)
 
 **What stays the same**
 - BBR, DroidSpaces and the installer
 
 **Verified**
+- Tested on the phone (POCO F5 Pro, MistOS 5.1 Beta 20261025) with one boot from `fastboot boot`, nothing flashed: SELinux is Enforcing, `su` works, the backslashxx manager reports it as working, `nm version` reports 23 (785), NoMount loads, SUSFS v2.4.0 is initialized with all its features, `dmesg` shows no Oops or panic, and `/proc/kallsyms` shows none of the root-revealing names
 - KMI against clean Equinox: 0 changed CRCs and 0 removed symbols (only `put_pid_ns` added)
 - Vendor module CRCs match (337 `vendor_boot` and 390 `vendor_dlkm`) with MistOS 20261025 and
   with 11 of the 11 applicable Keosh ROMs; AOSPA and PenguinOS are not on this list since they

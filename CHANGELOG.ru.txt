@@ -8,32 +8,32 @@
 
 ---
 
-## 1.0 (2026-11-18)
+## 1.0 (2026-11-19)
 
 Первый выпуск этого издания
 
 **backslashxx/KernelSU**
 - backslashxx/KernelSU v3.3.1+52 (UAPI 6) вместо FinaSU, встроен как подмодуль `KernelSU/`
-  Использует свой собственный бэкенд хуков (таблица syscall / branch-link ARM64), а не Tracepoint-хук FinaSU
+  Использует свой собственный бэкенд хуков (таблица syscall, `KSU_TAMPER_SYSCALL_TABLE`, совместим с Clang CFI), а не Tracepoint-хук FinaSU
   Официальный менеджер backslashxx (пакет `me.weishu.kernelsu`)
 
-**SUSFS v2.4.0 и NoMount v2.3.0**
+**SUSFS v2.4.0 и NoMount v2.3.1**
 - backslashxx не содержит поддержки SUSFS по умолчанию: для этого издания написан новый интерфейс
   (`KernelSU/kernel/extension/susfs.c`) с поиском SID, обработкой umount для zygote и zygote_next
   и регистрацией правил SELinux
-- NoMount v2.3.0 остаётся таким же, как в других изданиях: встроен, скрыт от `/sys/module` и `/proc/kallsyms`
+- NoMount v2.3.1 остаётся таким же, как в других изданиях: встроен, скрыт от `/sys/module` и `/proc/kallsyms`
 - SUSFS и NoMount управляются своими собственными root-модулями (`ksu_module_susfs` и метамодуль
   NoMount), устанавливаемыми из менеджера backslashxx как любой модуль KernelSU
 
 **Фильтр `/proc/kallsyms`**
 - Переделан под собственные символы backslashxx: осталось 0 символов, выдающих root
-  (единственные видимые символы — общие копии функций доступа к памяти, уже встречающиеся
-  сотни раз в любом стоковом ядре, не связанные с драйвером)
+  (не остаётся видимым ни одного символа драйвера, включая символы хука таблицы syscall)
 
 **Что остаётся прежним**
 - BBR, DroidSpaces и установщик
 
 **Проверено**
+- Проверено на телефоне (POCO F5 Pro, MistOS 5.1 Beta 20261025) одной загрузкой через `fastboot boot`, ничего не прошивалось: SELinux в режиме Enforcing, `su` работает, менеджер backslashxx показывает, что всё работает, `nm version` показывает 23 (785), NoMount загружается, SUSFS v2.4.0 инициализирован со всеми функциями, `dmesg` не показывает Oops или panic, а `/proc/kallsyms` не показывает ни одного имени, выдающего root
 - KMI относительно чистого Equinox: 0 изменённых CRC и 0 удалённых символов (добавлен только `put_pid_ns`)
 - CRC модулей vendor совпадают (337 `vendor_boot` и 390 `vendor_dlkm`) с MistOS 20261025 и с 11
   из 11 применимых ROM от Keosh; AOSPA и PenguinOS не входят в этот список, так как используют

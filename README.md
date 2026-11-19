@@ -16,10 +16,10 @@
 > **This repository is the backslashxx edition of Equinox**, made by **Nanairo** with
 > LF52406's permission. It is Equinox 5.10.269 as released, with these changes:
 >
-> - **[backslashxx/KernelSU](https://github.com/backslashxx/KernelSU)** v3.3.1+52 (UAPI 6, a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of FinaSU, as the `KernelSU/` submodule, built into the kernel with backslashxx's own hook backend (ARM64 syscall-table / branch-link patching, not an inline fs/exec.c hook). Use **backslashxx's official manager** (package `me.weishu.kernelsu`).
+> - **[backslashxx/KernelSU](https://github.com/backslashxx/KernelSU)** v3.3.1+52 (UAPI 6, a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of FinaSU, as the `KernelSU/` submodule, built into the kernel with backslashxx's own hook backend (syscall table hooking, `KSU_TAMPER_SYSCALL_TABLE`, which backslashxx documents as Clang CFI compliant; not an inline fs/exec.c hook). Use **backslashxx's official manager** (package `me.weishu.kernelsu`).
 > - **SUSFS v2.4.0** from [simonpunk's](https://gitlab.com/simonpunk/susfs4ksu) `gki-android12-5.10` branch. backslashxx ships no SUSFS support of its own, so this edition adds a dedicated interface (`KernelSU/kernel/extension/susfs.c`) wiring SUSFS's SID lookups, zygote/zygote_next umount handling and SELinux rule registration onto backslashxx's own code.
 > - **BBR** as the default TCP congestion control.
-> - **[NoMount](https://github.com/maxsteeel/nomount) v2.3.0** by maxsteeel built in (`fs/nomount`), which includes deref3046's fix. Processes whose modules are umounted see the stock filesystem, and NoMount is hidden from `/sys/module` and `/proc/kallsyms`. SUSFS and NoMount are each controlled from their own root module (`ksu_module_susfs`, the NoMount metamodule), installable from backslashxx's manager like any KernelSU module — no special manager is needed.
+> - **[NoMount](https://github.com/maxsteeel/nomount) v2.3.1** by maxsteeel built in (`fs/nomount`), which includes deref3046's fix. Processes whose modules are umounted see the stock filesystem, and NoMount is hidden from `/sys/module` and `/proc/kallsyms`. SUSFS and NoMount are each controlled from their own root module (`ksu_module_susfs`, the NoMount metamodule), installable from backslashxx's manager like any KernelSU module — no special manager is needed.
 > - **Extra `/proc/kallsyms` hiding**: backslashxx exports many driver symbols whose names do not start with the usual KernelSU/SUSFS prefixes, so SUSFS's filter left them visible. The filter now also hides those, each one checked against a clean Equinox build.
 >
 > Everything else, DroidSpaces included, is LF52406's work, described below. The official Equinox
@@ -37,9 +37,9 @@
 | **Version** | `1.0` |
 | **Linux** | `5.10.269-Nanairo-backslashxx` |
 | **Compatibility** | MistOS and the AOSP ROMs listed in [Other AOSP ROMs](#other-aosp-roms); tested on MistOS 20261025 (`fastboot boot`) |
-| **backslashxx/KernelSU** | `v3.3.1+52`, built in · syscall-table / branch-link hooks |
+| **backslashxx/KernelSU** | `v3.3.1+52`, built in · syscall table hooks |
 | **SUSFS** | `2.4.0` |
-| **NoMount** | `v2.3.0` built in |
+| **NoMount** | `v2.3.1` built in |
 | **DroidSpaces** | Supported |
 | **TCP** | BBR default · CUBIC available |
 | **Toolchain** | AOSP Clang `22.0.0` (r584948) |
@@ -65,9 +65,10 @@
 ### 1.0
 
 - First release of this edition
-- backslashxx/KernelSU `v3.3.1+52` (UAPI 6) built in as the `KernelSU/` submodule, instead of FinaSU; uses its own hook backend (ARM64 syscall-table / branch-link), not an inline fs/exec.c hook
+- backslashxx/KernelSU `v3.3.1+52` (UAPI 6) built in as the `KernelSU/` submodule, instead of FinaSU; uses its own hook backend (syscall table, `KSU_TAMPER_SYSCALL_TABLE`, Clang CFI compliant), not an inline fs/exec.c hook
 - backslashxx ships no SUSFS support of its own: a new interface was written for this edition (`KernelSU/kernel/extension/susfs.c`) with the SID lookups, the zygote/zygote_next umount handling and the SELinux rule registration
-- Same NoMount v2.3.0, SUSFS v2.4.0, BBR, DroidSpaces, installer and ROM compatibility as the other editions
+- Same NoMount v2.3.1, SUSFS v2.4.0, BBR, DroidSpaces, installer and ROM compatibility as the other editions
+- Tested on the phone with `fastboot boot`: root, SELinux Enforcing, NoMount 23 (785), SUSFS v2.4.0 and the backslashxx manager work, and `/proc/kallsyms` shows no root-revealing names
 - `/proc/kallsyms` filter reworked for backslashxx's own symbols, checked against a clean Equinox build: 0 symbols that give away root
 - KMI verified against clean Equinox 5.10.269: 0 changed CRCs, 0 removed symbols
 - Vendor module CRCs checked against MistOS 20261025 and the latest Keosh builds (337 `vendor_boot` + 390 `vendor_dlkm`)

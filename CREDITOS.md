@@ -14,15 +14,15 @@ Los problemas de esta edición repórtalos a Nanairo, no a LF52406 ni a backslas
 ## Qué cambia respecto de Equinox oficial
 
 - **backslashxx/KernelSU** v3.3.1+52 (UAPI 6) en lugar de KernelSU-Next, integrado en el
-  kernel con su propio backend de hooks (parcheo de la tabla de syscalls / branch-link en
-  ARM64). Usa el manager oficial de backslashxx (paquete `me.weishu.kernelsu`).
+  kernel con su propio backend de hooks (hook de la tabla de syscalls,
+  `KSU_TAMPER_SYSCALL_TABLE`, compatible con Clang CFI). Usa el manager oficial de backslashxx (paquete `me.weishu.kernelsu`).
 - **SUSFS v2.4.0** desde la rama `gki-android12-5.10` de simonpunk, con una interfaz escrita
   para esta edición (backslashxx no trae soporte de SUSFS de fábrica), y todas las funciones
   activas (sus_path, sus_mount, sus_kstat, sus_map, spoof uname, spoof cmdline/bootconfig,
   open_redirect, log y ocultación de símbolos).
 - **BBR** como control de congestión TCP por defecto (Equinox trae BBR, pero usa CUBIC
   por defecto).
-- **NoMount v2.3.0** de maxsteeel integrado en el kernel. Esta edición hace que las apps a
+- **NoMount v2.3.1** de maxsteeel integrado en el kernel. Esta edición hace que las apps a
   las que SUSFS desmonta los módulos vean el sistema original, y oculta NoMount de
   `/sys/module` y `/proc/kallsyms`.
 - SUSFS y NoMount se controlan desde el módulo root `ksu_module_susfs` (trae su propio
@@ -44,7 +44,7 @@ SYSVIPC/POSIX_MQUEUE.
 - [SUSFS](https://gitlab.com/simonpunk/susfs4ksu) de **simonpunk**.
 - [DroidSpaces](https://github.com/ravindu644/Droidspaces-OSS) de **ravindu644**.
 - [NoMount](https://github.com/maxsteeel/nomount) de **maxsteeel**: redirección de rutas en
-  VFS (v2.3.0); incluye el arreglo `7e7342c` de **deref3046**.
+  VFS (v2.3.1); incluye el arreglo `7e7342c` de **deref3046**.
 - [AnyKernel3](https://github.com/osm0sis/AnyKernel3) de **osm0sis**.
 - **[Nanairo8890](https://github.com/nanairo8890)**: integración de backslashxx/KernelSU, SUSFS, BBR y NoMount en Equinox.
 
@@ -56,7 +56,7 @@ Equinox Kernel is **LF52406**'s kernel for mondrian. This build is Equinox 5.10.
 by Nanairo with LF52406's permission: **backslashxx/KernelSU** v3.3.1+52 (a fork of
 KernelSU) replaces KernelSU-Next and is built in, with a SUSFS v2.4.0 interface written for
 this edition (backslashxx ships no SUSFS support of its own), TCP defaults to BBR, and
-maxsteeel's NoMount v2.3.0 (which includes deref3046's fix 7e7342c) is built in. SUSFS and
+maxsteeel's NoMount v2.3.1 (which includes deref3046's fix 7e7342c) is built in. SUSFS and
 NoMount are controlled from their own root modules (`ksu_module_susfs` and the NoMount
 metamodule), installable from backslashxx's own manager like any KernelSU module — no special
 manager is needed. Everything else is Equinox as released, DroidSpaces included. All base

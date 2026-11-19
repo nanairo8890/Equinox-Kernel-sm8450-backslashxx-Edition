@@ -8,32 +8,32 @@ Problemas con esta edición: repórtalos a Nanairo8890, no a LF52406 ni a backsl
 
 ---
 
-## 1.0 (2026-11-18)
+## 1.0 (2026-11-19)
 
 Primera versión de esta edición
 
 **backslashxx/KernelSU**
 - backslashxx/KernelSU v3.3.1+52 (UAPI 6) en lugar de FinaSU, integrado como submódulo `KernelSU/`
-  Usa su propio backend de hooks (tabla de syscalls / branch-link ARM64), no el hook Tracepoint de FinaSU
+  Usa su propio backend de hooks (tabla de syscalls, `KSU_TAMPER_SYSCALL_TABLE`, compatible con Clang CFI), no el hook Tracepoint de FinaSU
   Manager oficial de backslashxx (paquete `me.weishu.kernelsu`)
 
-**SUSFS v2.4.0 y NoMount v2.3.0**
+**SUSFS v2.4.0 y NoMount v2.3.1**
 - backslashxx no trae soporte de SUSFS de fábrica: se escribió una interfaz nueva para esta edición
   (`KernelSU/kernel/extension/susfs.c`), con las búsquedas de SID, el manejo de umount para zygote
   y zygote_next, y el registro de reglas de SELinux
-- NoMount v2.3.0 queda igual que en las otras ediciones: built-in, oculto de `/sys/module` y `/proc/kallsyms`
+- NoMount v2.3.1 queda igual que en las otras ediciones: built-in, oculto de `/sys/module` y `/proc/kallsyms`
 - SUSFS y NoMount se controlan desde sus propios módulos root (`ksu_module_susfs` y el metamódulo
   NoMount), instalables desde el manager de backslashxx como cualquier módulo de KernelSU
 
 **Filtro de `/proc/kallsyms`**
 - Se rehizo para los símbolos propios de backslashxx: quedaron 0 símbolos que delaten root
-  (los únicos símbolos que siguen visibles son copias genéricas de funciones de acceso a memoria
-  que ya aparecen cientos de veces en cualquier kernel stock, no tienen nada que ver con el driver)
+  (no queda visible ningún símbolo del driver, incluidos los del hook de la tabla de syscalls)
 
 **Qué sigue igual**
 - BBR, DroidSpaces y el instalador
 
 **Verificado**
+- Probado en el teléfono (POCO F5 Pro, MistOS 5.1 Beta 20261025) con un arranque desde `fastboot boot`, sin flashear nada: SELinux está en Enforcing, `su` funciona, el manager de backslashxx lo muestra funcionando, `nm version` da 23 (785), NoMount carga, SUSFS v2.4.0 se inicializa con todas sus funciones, `dmesg` no muestra Oops ni panic, y `/proc/kallsyms` no muestra ningún nombre que delate root
 - KMI frente a Equinox limpio: 0 CRC cambiados y 0 símbolos eliminados (solo se agrega `put_pid_ns`)
 - Los CRC de los módulos del vendor coinciden (337 de `vendor_boot` y 390 de `vendor_dlkm`) con
   MistOS 20261025 y con 11 de las 11 ROMs de Keosh aplicables; AOSPA y PenguinOS no entran en esta
