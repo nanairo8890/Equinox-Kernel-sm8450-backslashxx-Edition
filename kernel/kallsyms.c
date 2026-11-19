@@ -744,6 +744,19 @@ static int s_show(struct seq_file *m, void *p)
 			susfs_starts_with(iter->name, "avc_spoof") ||
 			susfs_starts_with(iter->name, "shell_su_adb_only") ||
 			susfs_starts_with(iter->name, "su_compat_") ||
+			susfs_starts_with(iter->name, "sucompat_") ||
+			susfs_starts_with(iter->name, "syscall_table_") ||
+			susfs_starts_with(iter->name, "hook_aarch64_") ||
+			susfs_starts_with(iter->name, "hook_armeabi_") ||
+			susfs_starts_with(iter->name, "aarch64_execve") ||
+			susfs_starts_with(iter->name, "aarch64_faccessat") ||
+			susfs_starts_with(iter->name, "aarch64_newfstat") ||
+			susfs_starts_with(iter->name, "aarch64_read") ||
+			susfs_starts_with(iter->name, "aarch64_reboot") ||
+			susfs_starts_with(iter->name, "armeabi_") ||
+			susfs_starts_with(iter->name, "__range_ok") ||
+			susfs_starts_with(iter->name, "_copy_from_user") ||
+			susfs_starts_with(iter->name, "_copy_to_user") ||
 			susfs_starts_with(iter->name, "su_path") ||
 			susfs_starts_with(iter->name, "block_modules") ||
 			susfs_starts_with(iter->name, "anon_ksu") ||
