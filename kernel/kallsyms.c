@@ -961,6 +961,14 @@ static int s_show(struct seq_file *m, void *p)
 		susfs_starts_with(iter->name, "set_type_state") ||
 		susfs_starts_with(iter->name, "setprocattr_fn") ||
 		susfs_starts_with(iter->name, "sh_user_path") ||
+		susfs_starts_with(iter->name, "init_arm64_selinux_hide") ||
+		susfs_starts_with(iter->name, "sh_security_") ||
+		susfs_starts_with(iter->name, "sh_selinux_") ||
+		susfs_starts_with(iter->name, "sh_simple_transaction_get") ||
+		susfs_starts_with(iter->name, "arm64_nop_bank") ||
+		susfs_starts_with(iter->name, "do_useless_alloc") ||
+		susfs_starts_with(iter->name, "memset_explicit") ||
+		susfs_starts_with(iter->name, "security_context_to_sid_core_fn") ||
 		susfs_starts_with(iter->name, "system_dir_inode_ptr") ||
 		susfs_starts_with(iter->name, "task_fix_setuid_fn") ||
 		susfs_starts_with(iter->name, "throne_tracker_fn") ||
