@@ -16,7 +16,7 @@
 > **This repository is the backslashxx edition of Equinox**, made by **Nanairo** with
 > LF52406's permission. It is Equinox 5.10.269 as released, with these changes:
 >
-> - **[backslashxx/KernelSU](https://github.com/backslashxx/KernelSU)** v3.3.1+52 (UAPI 6, a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of FinaSU, as the `KernelSU/` submodule ([nanairo8890/KernelSU](https://github.com/nanairo8890/KernelSU), branch `equinox-bsxx`: backslashxx's v3.3.1+52 plus this edition's SUSFS interface and a SELinux lock fix), built into the kernel with backslashxx's own hook backend (syscall table hooking, `KSU_TAMPER_SYSCALL_TABLE`, which backslashxx documents as Clang CFI compliant; not an inline fs/exec.c hook). Use **backslashxx's official manager** (package `me.weishu.kernelsu`).
+> - **[backslashxx/KernelSU](https://github.com/backslashxx/KernelSU)** v3.3.1+55 (UAPI 6, a fork of [KernelSU](https://github.com/tiann/KernelSU)) instead of FinaSU, as the `KernelSU/` submodule ([nanairo8890/KernelSU](https://github.com/nanairo8890/KernelSU), branch `equinox-bsxx`: backslashxx's v3.3.1+55 plus this edition's SUSFS interface and a SELinux lock fix), built into the kernel with backslashxx's own hook backend (syscall table hooking, `KSU_TAMPER_SYSCALL_TABLE`, which backslashxx documents as Clang CFI compliant; not an inline fs/exec.c hook). Use **backslashxx's official manager** (package `me.weishu.kernelsu`).
 > - **SUSFS v2.4.0** from [simonpunk's](https://gitlab.com/simonpunk/susfs4ksu) `gki-android12-5.10` branch. backslashxx ships no SUSFS support of its own, so this edition adds a dedicated interface (`KernelSU/kernel/extension/susfs.c`) wiring SUSFS's SID lookups, zygote/zygote_next umount handling and SELinux rule registration onto backslashxx's own code.
 > - **BBR** as the default TCP congestion control.
 > - **[NoMount](https://github.com/maxsteeel/nomount) v2.3.1** by maxsteeel built in (`fs/nomount`), which includes deref3046's fix. Processes whose modules are umounted see the stock filesystem, and NoMount is hidden from `/sys/module` and `/proc/kallsyms`. SUSFS and NoMount are each controlled from their own root module (`ksu_module_susfs`, the NoMount metamodule), installable from backslashxx's manager like any KernelSU module — no special manager is needed.
@@ -26,7 +26,7 @@
 > builds are at [LF52406/Equinox-Kernel-sm8450](https://github.com/LF52406/Equinox-Kernel-sm8450).
 > Report problems with this edition to Nanairo8890, not to LF52406 or backslashxx.
 >
-> Build: `CLANG_DIR=/path/to/clang/bin scripts/equinox/build-bsxx.sh`, then `scripts/equinox/package-bsxx.sh` · Changes: [release notes](scripts/equinox/release-notes/5.10.269-bsxx-1.0.md) · Changelog: [English](CHANGELOG.en.txt) · [Español](CHANGELOG.es.txt) · [Português (Brasil)](CHANGELOG.pt-BR.txt) · [Русский](CHANGELOG.ru.txt)
+> Build: `CLANG_DIR=/path/to/clang/bin scripts/equinox/build-bsxx.sh`, then `scripts/equinox/package-bsxx.sh` · Changes: [release notes](scripts/equinox/release-notes/5.10.269-bsxx-1.1.md) · Changelog: [English](CHANGELOG.en.txt) · [Español](CHANGELOG.es.txt) · [Português (Brasil)](CHANGELOG.pt-BR.txt) · [Русский](CHANGELOG.ru.txt)
 
 ---
 
@@ -34,10 +34,10 @@
 
 | Component | Current |
 |:--|:--|
-| **Version** | `1.0` |
+| **Version** | `1.1` |
 | **Linux** | `5.10.269-Nanairo-backslashxx` |
 | **Compatibility** | MistOS and the AOSP ROMs listed in [Other AOSP ROMs](#other-aosp-roms); tested on MistOS 20261025 (`fastboot boot`) |
-| **backslashxx/KernelSU** | `v3.3.1+52`, built in · syscall table hooks |
+| **backslashxx/KernelSU** | `v3.3.1+55`, built in · syscall table hooks |
 | **SUSFS** | `2.4.0` |
 | **NoMount** | `v2.3.1` built in |
 | **DroidSpaces** | Supported |
@@ -62,10 +62,17 @@
 
 ## Latest Changes
 
+### 1.1
+
+- backslashxx/KernelSU updated from `v3.3.1+52` to `v3.3.1+55` (UAPI 6); use the backslashxx manager `v3.3.1-55` from the release
+- Per its release notes: a fix for the batched symbol resolver, locking fixes, a small trampoline fallback for the 6.12 LSM and a workaround for the Duck Detector `simple_transaction_get` side channel; the code adds a dedicated arm64 routine for selinux_hide
+- The `/proc/kallsyms` filter also hides the new routine's symbols
+- Same SUSFS v2.4.0, NoMount v2.3.1, KMI, installer and ROM compatibility as 1.0
+
 ### 1.0
 
 - First release of this edition
-- backslashxx/KernelSU `v3.3.1+52` (UAPI 6) built in as the `KernelSU/` submodule, instead of FinaSU; uses its own hook backend (syscall table, `KSU_TAMPER_SYSCALL_TABLE`, Clang CFI compliant), not an inline fs/exec.c hook
+- backslashxx/KernelSU `v3.3.1+55` (UAPI 6) built in as the `KernelSU/` submodule, instead of FinaSU; uses its own hook backend (syscall table, `KSU_TAMPER_SYSCALL_TABLE`, Clang CFI compliant), not an inline fs/exec.c hook
 - backslashxx ships no SUSFS support of its own: a new interface was written for this edition (`KernelSU/kernel/extension/susfs.c`) with the SID lookups, the zygote/zygote_next umount handling and the SELinux rule registration
 - Same NoMount v2.3.1, SUSFS v2.4.0, BBR, DroidSpaces, installer and ROM compatibility as the other editions
 - Tested on the phone with `fastboot boot`: root, SELinux Enforcing, NoMount 23 (785), SUSFS v2.4.0 and the backslashxx manager work, and `/proc/kallsyms` shows no root-revealing names
@@ -81,11 +88,11 @@
 
 Builds are published through **GitHub Releases**, with the SHA256 of each file on the release page.
 
-**Current package:** `Equinox-5.10.269-backslashxx-1.0-mondrian.zip`
+**Current package:** `Equinox-5.10.269-backslashxx-1.1-mondrian.zip`
 
 Download the release asset and flash the AnyKernel3 ZIP using a compatible recovery or kernel flasher. The ZIP only replaces the kernel `Image`, after checking that the ROM's vendor modules accept it; if you update the ROM, flash it again afterwards. Install backslashxx's manager to manage root and modules, and the `ksu_module_susfs` and NoMount modules from it to control SUSFS and NoMount.
 
-Not sure whether your ROM is compatible? Flash `Equinox-5.10.269-backslashxx-1.0-mondrian-checkonly.zip` first: it runs the same check and flashes nothing.
+Not sure whether your ROM is compatible? Flash `Equinox-5.10.269-backslashxx-1.1-mondrian-checkonly.zip` first: it runs the same check and flashes nothing.
 
 > GitHub-generated `Source code` archives are not flashable kernel packages.
 

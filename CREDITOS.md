@@ -13,7 +13,7 @@ Los problemas de esta edición repórtalos a Nanairo, no a LF52406 ni a backslas
 
 ## Qué cambia respecto de Equinox oficial
 
-- **backslashxx/KernelSU** v3.3.1+52 (UAPI 6) en lugar de KernelSU-Next, integrado en el
+- **backslashxx/KernelSU** v3.3.1+55 (UAPI 6) en lugar de KernelSU-Next, integrado en el
   kernel con su propio backend de hooks (hook de la tabla de syscalls,
   `KSU_TAMPER_SYSCALL_TABLE`, compatible con Clang CFI). Usa el manager oficial de backslashxx (paquete `me.weishu.kernelsu`).
 - **SUSFS v2.4.0** desde la rama `gki-android12-5.10` de simonpunk, con una interfaz escrita
@@ -53,7 +53,7 @@ SYSVIPC/POSIX_MQUEUE.
 # Equinox Kernel — backslashxx edition (English)
 
 Equinox Kernel is **LF52406**'s kernel for mondrian. This build is Equinox 5.10.269 modified
-by Nanairo with LF52406's permission: **backslashxx/KernelSU** v3.3.1+52 (a fork of
+by Nanairo with LF52406's permission: **backslashxx/KernelSU** v3.3.1+55 (a fork of
 KernelSU) replaces KernelSU-Next and is built in, with a SUSFS v2.4.0 interface written for
 this edition (backslashxx ships no SUSFS support of its own), TCP defaults to BBR, and
 maxsteeel's NoMount v2.3.1 (which includes deref3046's fix 7e7342c) is built in. SUSFS and

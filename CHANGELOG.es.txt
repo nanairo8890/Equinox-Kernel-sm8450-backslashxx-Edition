@@ -8,6 +8,33 @@ Problemas con esta edición: repórtalos a Nanairo8890, no a LF52406 ni a backsl
 
 ---
 
+## 1.1 (2026-11-23)
+
+backslashxx/KernelSU pasa a v3.3.1+55
+Todo lo demás es igual que en 1.0
+
+**backslashxx/KernelSU v3.3.1+55**
+- backslashxx/KernelSU pasa de v3.3.1+52 a v3.3.1+55 (UAPI 6)
+  Manager oficial de backslashxx `KernelSU_v3.3.1-55_32736-release.apk`, con la misma firma
+- Sus notas de versión mencionan: un arreglo del resolvedor de símbolos por lotes, arreglos de bloqueos, su propia implementación del pull request 3996 del KernelSU original, un pequeño trampolín de respaldo para el LSM de 6.12 y un workaround para el canal lateral `simple_transaction_get` de Duck Detector
+- Se agregó en el código del kernel una rutina arm64 propia para selinux_hide
+- La interfaz de SUSFS y el arreglo de policy_mutex de esta edición se aplican encima sin cambios
+
+**Filtro de `/proc/kallsyms`**
+- También oculta los símbolos de la nueva rutina arm64 de selinux_hide: ninguno existe en el kernel limpio ni en los módulos del vendor, y no queda visible ningún símbolo del driver que delate root
+
+**Qué sigue igual**
+- SUSFS v2.4.0, NoMount v2.3.1, BBR, DroidSpaces y el instalador
+
+**Verificado**
+- KMI frente a Equinox limpio: 0 CRC cambiados y 0 símbolos eliminados (solo se agrega `put_pid_ns`)
+- Los CRC de los módulos del vendor coinciden (337 de `vendor_boot` y 390 de `vendor_dlkm`) con MistOS 5.1 Beta 20261025 y con las 11 últimas builds de Keosh; AOSPA y PenguinOS siguen sin ser compatibles
+- La compilación no muestra avisos ni errores en el código de root, SUSFS y NoMount
+- El filtro de `/proc/kallsyms` se comprobó en el kernel compilado: ningún símbolo del driver que queda visible delata root, y NoMount no agrega símbolos visibles nuevos
+- Todavía no se probó arrancándolo en un teléfono
+
+---
+
 ## 1.0 (2026-11-19)
 
 Primera versión de esta edición
